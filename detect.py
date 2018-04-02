@@ -12,9 +12,10 @@ def detect(cfgfile, weightfile, imgfile):
     m.load_weights(weightfile)
     print('Loading weights from %s... Done!' % (weightfile))
 
-    if m.num_classes == 20:
+    num_classes = 80
+    if num_classes == 20:
         namesfile = 'data/voc.names'
-    elif m.num_classes == 80:
+    elif num_classes == 80:
         namesfile = 'data/coco.names'
     else:
         namesfile = 'data/names'

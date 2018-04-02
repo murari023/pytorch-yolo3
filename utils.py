@@ -7,6 +7,7 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 from torch.autograd import Variable
 
+import itertools
 import struct # get_image_size
 import imghdr # get_image_size
 
@@ -333,29 +334,20 @@ def do_detect(model, img, conf_thresh, nms_thresh, use_cuda=1):
     img = torch.autograd.Variable(img)
     t2 = time.time()
 
-    output = model(img)
-    output = output.data
-    #for j in range(100):
-    #    sys.stdout.write('%f ' % (output.storage()[j]))
-    #print('')
+    list_boxes = model(img)
+    boxes = list(itertools.chain(*list_boxes))
     t3 = time.time()
 
-    boxes = get_region_boxes(output, conf_thresh, model.num_classes, model.anchors, model.num_anchors)[0]
-    #for j in range(len(boxes)):
-    #    print(boxes[j])
-    t4 = time.time()
-
     boxes = nms(boxes, nms_thresh)
-    t5 = time.time()
+    t4 = time.time()
 
     if False:
         print('-----------------------------------')
         print(' image to tensor : %f' % (t1 - t0))
         print('  tensor to cuda : %f' % (t2 - t1))
         print('         predict : %f' % (t3 - t2))
-        print('get_region_boxes : %f' % (t4 - t3))
-        print('             nms : %f' % (t5 - t4))
-        print('           total : %f' % (t5 - t0))
+        print('             nms : %f' % (t4 - t3))
+        print('           total : %f' % (t4 - t0))
         print('-----------------------------------')
     return boxes
 
