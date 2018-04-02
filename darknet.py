@@ -162,6 +162,8 @@ class Darknet(nn.Module):
     
         prev_filters = 3
         out_filters =[]
+        prev_stride = 1
+        out_strides = []
         conv_id = 0
         for block in blocks:
             if block['type'] == 'net':
@@ -189,6 +191,8 @@ class Darknet(nn.Module):
                     model.add_module('relu{0}'.format(conv_id), nn.ReLU(inplace=True))
                 prev_filters = filters
                 out_filters.append(prev_filters)
+                prev_stride = stride * prev_stride
+                out_strides.append(prev_stride)
                 models.append(model)
             elif block['type'] == 'maxpool':
                 pool_size = int(block['size'])
@@ -198,6 +202,8 @@ class Darknet(nn.Module):
                 else:
                     model = MaxPoolStride1()
                 out_filters.append(prev_filters)
+                prev_stride = stride * prev_stride
+                out_strides.append(prev_stride)
                 models.append(model)
             elif block['type'] == 'avgpool':
                 model = GlobalAvgPool2d()
@@ -205,6 +211,7 @@ class Darknet(nn.Module):
                 models.append(model)
             elif block['type'] == 'softmax':
                 model = nn.Softmax()
+                out_strides.append(prev_stride)
                 out_filters.append(prev_filters)
                 models.append(model)
             elif block['type'] == 'cost':
@@ -215,15 +222,20 @@ class Darknet(nn.Module):
                 elif block['_type'] == 'smooth':
                     model = nn.SmoothL1Loss(size_average=True)
                 out_filters.append(1)
+                out_strides.append(prev_stride)
                 models.append(model)
             elif block['type'] == 'reorg':
                 stride = int(block['stride'])
                 prev_filters = stride * stride * prev_filters
                 out_filters.append(prev_filters)
+                prev_stride = prev_stride * stride
+                out_strides.append(prev_stride)
                 models.append(Reorg(stride))
             elif block['type'] == 'upsample':
                 stride = int(block['stride'])
                 out_filters.append(prev_filters)
+                prev_stride = prev_stride / stride
+                out_strides.append(prev_stride)
                 #models.append(nn.Upsample(scale_factor=stride, mode='nearest'))
                 models.append(Upsample(stride))
             elif block['type'] == 'route':
@@ -232,15 +244,20 @@ class Darknet(nn.Module):
                 layers = [int(i) if int(i) > 0 else int(i)+ind for i in layers]
                 if len(layers) == 1:
                     prev_filters = out_filters[layers[0]]
+                    prev_stride = out_strides[layers[0]]
                 elif len(layers) == 2:
                     assert(layers[0] == ind - 1)
                     prev_filters = out_filters[layers[0]] + out_filters[layers[1]]
+                    prev_stride = out_strides[layers[0]]
                 out_filters.append(prev_filters)
+                out_strides.append(prev_stride)
                 models.append(EmptyModule())
             elif block['type'] == 'shortcut':
                 ind = len(models)
                 prev_filters = out_filters[ind-1]
                 out_filters.append(prev_filters)
+                prev_stride = out_strides[ind-1]
+                out_strides.append(prev_stride)
                 models.append(EmptyModule())
             elif block['type'] == 'connected':
                 filters = int(block['output'])
@@ -256,6 +273,7 @@ class Darknet(nn.Module):
                                nn.ReLU(inplace=True))
                 prev_filters = filters
                 out_filters.append(prev_filters)
+                out_strides.append(prev_stride)
                 models.append(model)
             elif block['type'] == 'region':
                 loss = RegionLoss()
@@ -269,6 +287,7 @@ class Darknet(nn.Module):
                 loss.class_scale = float(block['class_scale'])
                 loss.coord_scale = float(block['coord_scale'])
                 out_filters.append(prev_filters)
+                out_strides.append(prev_stride)
                 models.append(loss)
             elif block['type'] == 'yolo':
                 yolo_layer = YoloLayer()
@@ -279,11 +298,13 @@ class Darknet(nn.Module):
                 yolo_layer.num_classes = int(block['classes'])
                 yolo_layer.num_anchors = int(block['num'])
                 yolo_layer.anchor_step = len(yolo_layer.anchors)/yolo_layer.num_anchors
+                yolo_layer.stride = prev_stride
                 #yolo_layer.object_scale = float(block['object_scale'])
                 #yolo_layer.noobject_scale = float(block['noobject_scale'])
                 #yolo_layer.class_scale = float(block['class_scale'])
                 #yolo_layer.coord_scale = float(block['coord_scale'])
                 out_filters.append(prev_filters)
+                out_strides.append(prev_stride)
                 models.append(yolo_layer)
             else:
                 print('unknown type %s' % (block['type']))
