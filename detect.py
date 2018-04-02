@@ -20,7 +20,7 @@ def detect(cfgfile, weightfile, imgfile):
     else:
         namesfile = 'data/names'
     
-    use_cuda = 0
+    use_cuda = 1
     if use_cuda:
         m.cuda()
 
