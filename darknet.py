@@ -26,8 +26,6 @@ class Upsample(nn.Module):
         C = x.data.size(1)
         H = x.data.size(2)
         W = x.data.size(3)
-        assert(H % stride == 0)
-        assert(W % stride == 0)
         ws = stride
         hs = stride
         x = x.view(B, C, H, 1, W, 1).expand(B, C, H, stride, W, stride).contiguous().view(B, C, H*stride, W*stride)
@@ -294,7 +292,7 @@ class Darknet(nn.Module):
 
     def load_weights(self, weightfile):
         fp = open(weightfile, 'rb')
-        header = np.fromfile(fp, count=4, dtype=np.int32)
+        header = np.fromfile(fp, count=5, dtype=np.int32)
         self.header = torch.from_numpy(header)
         self.seen = self.header[3]
         buf = np.fromfile(fp, dtype = np.float32)
