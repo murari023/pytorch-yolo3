@@ -7,111 +7,126 @@ Convert https://pjreddie.com/darknet/yolo/ into pytorch.
 ---
 #### Detection Using A Pre-Trained Model
 ```
-wget http://pjreddie.com/media/files/yolo.weights
-python detect.py cfg/yolo.cfg yolo.weights data/dog.jpg
+wget https://pjreddie.com/media/files/yolov3.weights
+python detect.py cfg/yolov3.cfg yolov3.weights data/dog.jpg
 ```
 You will see some output like this:
 ```
 layer     filters    size              input                output
     0 conv     32  3 x 3 / 1   416 x 416 x   3   ->   416 x 416 x  32
-    1 max          2 x 2 / 2   416 x 416 x  32   ->   208 x 208 x  32
-    ......
-   30 conv    425  1 x 1 / 1    13 x  13 x1024   ->    13 x  13 x 425
-   31 detection
-Loading weights from yolo.weights... Done!
-data/dog.jpg: Predicted in 0.014079 seconds.
-truck: 0.934711
-bicycle: 0.998013
-dog: 0.990524
+    1 conv     64  3 x 3 / 2   416 x 416 x  32   ->   208 x 208 x  64
+    2 conv     32  1 x 1 / 1   208 x 208 x  64   ->   208 x 208 x  32
+    3 conv     64  3 x 3 / 1   208 x 208 x  32   ->   208 x 208 x  64
+    4 shortcut 1
+    5 conv    128  3 x 3 / 2   208 x 208 x  64   ->   104 x 104 x 128
+    6 conv     64  1 x 1 / 1   104 x 104 x 128   ->   104 x 104 x  64
+    7 conv    128  3 x 3 / 1   104 x 104 x  64   ->   104 x 104 x 128
+    8 shortcut 5
+    9 conv     64  1 x 1 / 1   104 x 104 x 128   ->   104 x 104 x  64
+   10 conv    128  3 x 3 / 1   104 x 104 x  64   ->   104 x 104 x 128
+   11 shortcut 8
+   12 conv    256  3 x 3 / 2   104 x 104 x 128   ->    52 x  52 x 256
+   13 conv    128  1 x 1 / 1    52 x  52 x 256   ->    52 x  52 x 128
+   14 conv    256  3 x 3 / 1    52 x  52 x 128   ->    52 x  52 x 256
+   15 shortcut 12
+   16 conv    128  1 x 1 / 1    52 x  52 x 256   ->    52 x  52 x 128
+   17 conv    256  3 x 3 / 1    52 x  52 x 128   ->    52 x  52 x 256
+   18 shortcut 15
+   19 conv    128  1 x 1 / 1    52 x  52 x 256   ->    52 x  52 x 128
+   20 conv    256  3 x 3 / 1    52 x  52 x 128   ->    52 x  52 x 256
+   21 shortcut 18
+   22 conv    128  1 x 1 / 1    52 x  52 x 256   ->    52 x  52 x 128
+   23 conv    256  3 x 3 / 1    52 x  52 x 128   ->    52 x  52 x 256
+   24 shortcut 21
+   25 conv    128  1 x 1 / 1    52 x  52 x 256   ->    52 x  52 x 128
+   26 conv    256  3 x 3 / 1    52 x  52 x 128   ->    52 x  52 x 256
+   27 shortcut 24
+   28 conv    128  1 x 1 / 1    52 x  52 x 256   ->    52 x  52 x 128
+   29 conv    256  3 x 3 / 1    52 x  52 x 128   ->    52 x  52 x 256
+   30 shortcut 27
+   31 conv    128  1 x 1 / 1    52 x  52 x 256   ->    52 x  52 x 128
+   32 conv    256  3 x 3 / 1    52 x  52 x 128   ->    52 x  52 x 256
+   33 shortcut 30
+   34 conv    128  1 x 1 / 1    52 x  52 x 256   ->    52 x  52 x 128
+   35 conv    256  3 x 3 / 1    52 x  52 x 128   ->    52 x  52 x 256
+   36 shortcut 33
+   37 conv    512  3 x 3 / 2    52 x  52 x 256   ->    26 x  26 x 512
+   38 conv    256  1 x 1 / 1    26 x  26 x 512   ->    26 x  26 x 256
+   39 conv    512  3 x 3 / 1    26 x  26 x 256   ->    26 x  26 x 512
+   40 shortcut 37
+   41 conv    256  1 x 1 / 1    26 x  26 x 512   ->    26 x  26 x 256
+   42 conv    512  3 x 3 / 1    26 x  26 x 256   ->    26 x  26 x 512
+   43 shortcut 40
+   44 conv    256  1 x 1 / 1    26 x  26 x 512   ->    26 x  26 x 256
+   45 conv    512  3 x 3 / 1    26 x  26 x 256   ->    26 x  26 x 512
+   46 shortcut 43
+   47 conv    256  1 x 1 / 1    26 x  26 x 512   ->    26 x  26 x 256
+   48 conv    512  3 x 3 / 1    26 x  26 x 256   ->    26 x  26 x 512
+   49 shortcut 46
+   50 conv    256  1 x 1 / 1    26 x  26 x 512   ->    26 x  26 x 256
+   51 conv    512  3 x 3 / 1    26 x  26 x 256   ->    26 x  26 x 512
+   52 shortcut 49
+   53 conv    256  1 x 1 / 1    26 x  26 x 512   ->    26 x  26 x 256
+   54 conv    512  3 x 3 / 1    26 x  26 x 256   ->    26 x  26 x 512
+   55 shortcut 52
+   56 conv    256  1 x 1 / 1    26 x  26 x 512   ->    26 x  26 x 256
+   57 conv    512  3 x 3 / 1    26 x  26 x 256   ->    26 x  26 x 512
+   58 shortcut 55
+   59 conv    256  1 x 1 / 1    26 x  26 x 512   ->    26 x  26 x 256
+   60 conv    512  3 x 3 / 1    26 x  26 x 256   ->    26 x  26 x 512
+   61 shortcut 58
+   62 conv   1024  3 x 3 / 2    26 x  26 x 512   ->    13 x  13 x1024
+   63 conv    512  1 x 1 / 1    13 x  13 x1024   ->    13 x  13 x 512
+   64 conv   1024  3 x 3 / 1    13 x  13 x 512   ->    13 x  13 x1024
+   65 shortcut 62
+   66 conv    512  1 x 1 / 1    13 x  13 x1024   ->    13 x  13 x 512
+   67 conv   1024  3 x 3 / 1    13 x  13 x 512   ->    13 x  13 x1024
+   68 shortcut 65
+   69 conv    512  1 x 1 / 1    13 x  13 x1024   ->    13 x  13 x 512
+   70 conv   1024  3 x 3 / 1    13 x  13 x 512   ->    13 x  13 x1024
+   71 shortcut 68
+   72 conv    512  1 x 1 / 1    13 x  13 x1024   ->    13 x  13 x 512
+   73 conv   1024  3 x 3 / 1    13 x  13 x 512   ->    13 x  13 x1024
+   74 shortcut 71
+   75 conv    512  1 x 1 / 1    13 x  13 x1024   ->    13 x  13 x 512
+   76 conv   1024  3 x 3 / 1    13 x  13 x 512   ->    13 x  13 x1024
+   77 conv    512  1 x 1 / 1    13 x  13 x1024   ->    13 x  13 x 512
+   78 conv   1024  3 x 3 / 1    13 x  13 x 512   ->    13 x  13 x1024
+   79 conv    512  1 x 1 / 1    13 x  13 x1024   ->    13 x  13 x 512
+   80 conv   1024  3 x 3 / 1    13 x  13 x 512   ->    13 x  13 x1024
+   81 conv    255  1 x 1 / 1    13 x  13 x1024   ->    13 x  13 x 255
+   82 detection
+   83 route  79
+   84 conv    256  1 x 1 / 1    13 x  13 x 512   ->    13 x  13 x 256
+   85 upsample           * 2    13 x  13 x 256   ->    26 x  26 x 256
+   86 route  85 61
+   87 conv    256  1 x 1 / 1    26 x  26 x 768   ->    26 x  26 x 256
+   88 conv    512  3 x 3 / 1    26 x  26 x 256   ->    26 x  26 x 512
+   89 conv    256  1 x 1 / 1    26 x  26 x 512   ->    26 x  26 x 256
+   90 conv    512  3 x 3 / 1    26 x  26 x 256   ->    26 x  26 x 512
+   91 conv    256  1 x 1 / 1    26 x  26 x 512   ->    26 x  26 x 256
+   92 conv    512  3 x 3 / 1    26 x  26 x 256   ->    26 x  26 x 512
+   93 conv    255  1 x 1 / 1    26 x  26 x 512   ->    26 x  26 x 255
+   94 detection
+   95 route  91
+   96 conv    128  1 x 1 / 1    26 x  26 x 256   ->    26 x  26 x 128
+   97 upsample           * 2    26 x  26 x 128   ->    52 x  52 x 128
+   98 route  97 36
+   99 conv    128  1 x 1 / 1    52 x  52 x 384   ->    52 x  52 x 128
+  100 conv    256  3 x 3 / 1    52 x  52 x 128   ->    52 x  52 x 256
+  101 conv    128  1 x 1 / 1    52 x  52 x 256   ->    52 x  52 x 128
+  102 conv    256  3 x 3 / 1    52 x  52 x 128   ->    52 x  52 x 256
+  103 conv    128  1 x 1 / 1    52 x  52 x 256   ->    52 x  52 x 128
+  104 conv    256  3 x 3 / 1    52 x  52 x 128   ->    52 x  52 x 256
+  105 conv    255  1 x 1 / 1    52 x  52 x 256   ->    52 x  52 x 255
+  106 detection
+Loading weights from yolov3.weights... Done!
+data/dog.jpg: Predicted in 1.405360 seconds.
+dog: 0.999996
+truck: 0.995232
+bicycle: 0.999972
+save plot results to predictions.jpg
 ```
----
-#### Real-Time Detection on a Webcam
-```
-python demo.py cfg/tiny-yolo-voc.cfg tiny-yolo-voc.weights
-```
----
 
-#### Training YOLO on VOC
-##### Get The Pascal VOC Data
-```
-wget https://pjreddie.com/media/files/VOCtrainval_11-May-2012.tar
-wget https://pjreddie.com/media/files/VOCtrainval_06-Nov-2007.tar
-wget https://pjreddie.com/media/files/VOCtest_06-Nov-2007.tar
-tar xf VOCtrainval_11-May-2012.tar
-tar xf VOCtrainval_06-Nov-2007.tar
-tar xf VOCtest_06-Nov-2007.tar
-```
-##### Generate Labels for VOC
-```
-wget http://pjreddie.com/media/files/voc_label.py
-python voc_label.py
-cat 2007_train.txt 2007_val.txt 2012_*.txt > voc_train.txt
-```
-##### Modify Cfg for Pascal Data
-Change the cfg/voc.data config file
-```
-train  = train.txt
-valid  = 2007_test.txt
-names = data/voc.names
-backup = backup
-```
-##### Download Pretrained Convolutional Weights
-Download weights from the convolutional layers
-```
-wget http://pjreddie.com/media/files/darknet19_448.conv.23
-```
-or run the following command:
-```
-python partial.py cfg/darknet19_448.cfg darknet19_448.weights darknet19_448.conv.23 23
-```
-##### Train The Model
-```
-python train.py cfg/voc.data cfg/yolo-voc.cfg darknet19_448.conv.23
-```
-##### Evaluate The Model
-```
-python valid.py cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights
-python scripts/voc_eval.py results/comp4_det_test_
-```
-mAP test on released models
-```
-yolo-voc.weights 544 0.7682 (paper: 78.6)
-yolo-voc.weights 416 0.7513 (paper: 76.8)
-tiny-yolo-voc.weights 416 0.5410 (paper: 57.1)
-
-```
----
-#### Focal Loss 
-A implementation of paper [Focal Loss for Dense Object Detection](https://arxiv.org/abs/1708.02002)
-
-We get the results by using Focal Loss to replace CrossEntropyLoss in RegionLosss.
-
- gama       | training set | val set | mAP@416 | mAP@544 | Notes
----         |---           |---      |---      |---      |---
- 0          |VOC2007+2012  | VOC2007 | 73.05   |  74.69  | std-Cross Entropy Loss
- 1          |VOC2007+2012  | VOC2007 | 73.63   |  75.26  | Focal Loss
- 2          |VOC2007+2012  | VOC2007 |**74.08**|**75.49**| Focal Loss
- 3          |VOC2007+2012  | VOC2007 |  73.73  |  75.20  | Focal Loss
- 4          |VOC2007+2012  | VOC2007 |  73.53  |  74.95  | Focal Loss
-
-
----
-#### Problems
-##### 1. Running variance difference between darknet and pytorch
-Change the code in normalize_cpu to make the same result
-```
-normalize_cpu:
-x[index] = (x[index] - mean[f])/(sqrt(variance[f] + .00001f));
-``` 
-#### Training on your own data
-1. Padding your images into square size and produce the corresponding label files.
-2. Modify the resize strageties in listDataset. Currently the resize scales range from 320 ~ 608, and the resize intervals is 64, which should be equal to batch_size or several times of batch_size. 
-3. Add warm up learning rate (scales=**0.1**,10,.1,.1)
-4. Train your model as VOC does.
-
----
-#### License
-MIT License (see LICENSE file).
-
-#### Contribution
-Thanks for the contributions from @iceflame89 for the image augmentation and @huaijin-chen for focal loss.
+### Train on COCO
+comming soon ...

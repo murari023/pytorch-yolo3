@@ -336,7 +336,6 @@ def do_detect(model, img, conf_thresh, nms_thresh, use_cuda=1):
 
     list_boxes = model(img)
     boxes = list_boxes[0][0] + list_boxes[1][0] + list_boxes[2][0]
-    print('boxes', boxes)
     t3 = time.time()
 
     boxes = nms(boxes, nms_thresh)
