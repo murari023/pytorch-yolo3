@@ -1,20 +1,8 @@
-### pytorch-yolo2
-Convert https://pjreddie.com/darknet/yolo/ into pytorch. This repository is trying to achieve the following goals.
-- [x] implement RegionLoss, MaxPoolStride1, Reorg, GolbalAvgPool2d
-- [x] implement route layer
-- [x] detect, partial, valid functions
-- [x] load darknet cfg
-- [x] load darknet saved weights
-- [x] save as darknet weights
-- [x] fast evaluation
-- [x] pascal voc validation
-- [x] train pascal voc
-- [x] LMDB data set
-- [x] Data augmentation
-- [x] load/save caffe prototxt and weights
-- [x] **reproduce darknet's training results**
-- [x] [convert weight/cfg between pytorch caffe and darknet](https://github.com/marvis/pytorch-caffe-darknet-convert)
-- [x] add focal loss
+### pytorch-yolo3
+Convert https://pjreddie.com/darknet/yolo/ into pytorch.
+
+### Todos
+- [x] make detect.py works
 
 ---
 #### Detection Using A Pre-Trained Model
